@@ -1,0 +1,19 @@
+﻿using FluentValidation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TicketManagementSystem.Application.Features.Categories.Commands.CreateCategory
+{
+    public class CreateCategoryCommandValidation : AbstractValidator<CreateCategoryCommand>
+    {
+        public CreateCategoryCommandValidation() 
+        {
+            RuleFor(e => e.Name).NotEmpty().WithMessage("{PropertyName} is required.")
+                .NotNull()
+                .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters");
+        }
+    }
+}
