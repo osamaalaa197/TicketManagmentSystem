@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TicketManagement.Api.Middleware;
+using TicketManagementSystem.Application;
 using TicketManagementSystem.Infrastructure;
 using TicketManagementSystem.persistence;
-using TicketManagementSystem.Application;
 
 namespace TicketManagement.Api
 {
@@ -35,6 +36,7 @@ namespace TicketManagement.Api
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
+            app.UseExceptionHandlerMiddleware();
             app.UseCors("Open");
             app.MapControllers();
             return app;

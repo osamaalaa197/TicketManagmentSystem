@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,13 @@ namespace TicketManagementSystem.Application.Features.Events.Commands.CreateEven
         private readonly IEventRepository _eventRepository;
         private readonly IMapper _mapper;
         public readonly IEmailService _emailService;
-        public CreateEventCommandHandler(IEventRepository eventRepository, IMapper mapper, IEmailService emailService )
+        private readonly ILogger<CreateEventCommandHandler> _logger;
+        public CreateEventCommandHandler(IEventRepository eventRepository, IMapper mapper, IEmailService emailService,ILogger<CreateEventCommandHandler> logger )
         {
             _eventRepository = eventRepository;
             _mapper = mapper;
             _emailService = emailService;
+            _logger= logger;
         }
         public async Task<CreateEventCommandResponse> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {
@@ -50,9 +53,11 @@ namespace TicketManagementSystem.Application.Features.Events.Commands.CreateEven
             try
             {
                 await _emailService.SendEmail(email);
+                _logger.LogInformation("Email sent for new event created.");
             }
             catch (Exception ex) 
             {
+                _logger.LogError($"Error sending email for new event created {ex.Message}");
             }
             response.Success = true;
             response.Event = _mapper.Map<CreateEventDto>(result);
