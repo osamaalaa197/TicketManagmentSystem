@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using TicketManagement.Api.Middleware;
 using TicketManagementSystem.Application;
+using TicketManagementSystem.Identity;
 using TicketManagementSystem.Infrastructure;
 using TicketManagementSystem.persistence;
 
@@ -13,6 +15,7 @@ namespace TicketManagement.Api
             builder.Services.AddApplicationServices();
             builder.Services.AddInfrInfrastructureService(builder.Configuration);
             builder.Services.AddPersistenceService(builder.Configuration);
+            builder.Services.AddIdentityServices(builder.Configuration);
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddControllers();
@@ -35,9 +38,10 @@ namespace TicketManagement.Api
             }
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseExceptionHandlerMiddleware();
             app.UseCors("Open");
+            app.UseAuthorization();
             app.MapControllers();
             return app;
         }

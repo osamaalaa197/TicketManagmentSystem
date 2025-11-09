@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TicketManagementSystem.Identity\TicketManagementSystem.Identity.csproj" />
     <ProjectReference Include="..\TicketManagementSystem.Infrastructure\TicketManagementSystem.Infrastructure.csproj" />
     <ProjectReference Include="..\TicketManagementSystem.persistence\TicketManagementSystem.persistence.csproj" />
     <ProjectReference Include="..\TicketManagmentSystem.Application\TicketManagementSystem.Application.csproj" />
