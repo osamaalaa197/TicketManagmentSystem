@@ -16,12 +16,12 @@ namespace TicketManagement.Api.Controllers
             _authenticationService = authenticationService;
         }
         [HttpPost("logIn")]
-        public async Task<IActionResult> LogIn([FromBody] AuthenticationRequest loginRequest)
+        public async Task<IActionResult> LogIn(AuthenticationRequest loginRequest)
         {
             return Ok(await _authenticationService.AuthenticateAsync(loginRequest));
         }
         [HttpPost("Register")]
-        public async Task<IActionResult> LogIn([FromBody] RegistrationRequest loginRequest)
+        public async Task<IActionResult> Register([FromBody] RegistrationRequest loginRequest)
         {
             return Ok(await _authenticationService.RegisterAsync(loginRequest));
         }

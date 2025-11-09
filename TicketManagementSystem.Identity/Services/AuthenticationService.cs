@@ -45,7 +45,7 @@ namespace TicketManagementSystem.Identity.Services
                 Email = user.Email,
                 UserName = user.UserName
             };
-            throw new NotImplementedException();
+            return response;
         }
 
         public async Task<RegistrationResponse> RegisterAsync(RegistrationRequest request)

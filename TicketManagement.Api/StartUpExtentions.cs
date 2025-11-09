@@ -39,7 +39,7 @@ namespace TicketManagement.Api
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
-            app.UseExceptionHandlerMiddleware();
+            //app.UseExceptionHandlerMiddleware();
             app.UseCors("Open");
             app.UseAuthorization();
             app.MapControllers();
