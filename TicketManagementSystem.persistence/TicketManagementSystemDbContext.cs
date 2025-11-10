@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using TicketManagementSystem.Domain.Comman;
 using TicketManagementSystem.Domain.Entities;
+using TicketManagementSystem.Identity.Models;
 
 namespace TicketManagementSystem.persistence
 {
-    public class TicketManagementSystemDbContext:DbContext
+    public class TicketManagementSystemDbContext:IdentityDbContext<ApplicationUser>
     {
         public TicketManagementSystemDbContext(DbContextOptions<TicketManagementSystemDbContext> contextOptions) :base(contextOptions)
         {

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TicketManagementSystem.Application.Contract.Identity;
 using TicketManagementSystem.Application.Contract.Infrastructure;
 using TicketManagementSystem.Application.Contract.Persistence;
 using TicketManagementSystem.Domain.Entities;
@@ -19,12 +20,15 @@ namespace TicketManagementSystem.Application.Features.Events.Commands.CreateEven
         private readonly IMapper _mapper;
         public readonly IEmailService _emailService;
         private readonly ILogger<CreateEventCommandHandler> _logger;
-        public CreateEventCommandHandler(IEventRepository eventRepository, IMapper mapper, IEmailService emailService,ILogger<CreateEventCommandHandler> logger )
+        private readonly ICurrentUserService _currentUserService;
+
+        public CreateEventCommandHandler(IEventRepository eventRepository, IMapper mapper, IEmailService emailService,ILogger<CreateEventCommandHandler> logger,ICurrentUserService currentUserService )
         {
             _eventRepository = eventRepository;
             _mapper = mapper;
             _emailService = emailService;
             _logger= logger;
+            _currentUserService=currentUserService;
         }
         public async Task<CreateEventCommandResponse> Handle(CreateEventCommand request, CancellationToken cancellationToken)
         {

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TicketManagementSystem.Application.Contract.Identity;
 using TicketManagementSystem.Application.Contract.Persistence;
 using TicketManagementSystem.Domain.Entities;
 
@@ -14,11 +15,13 @@ namespace TicketManagementSystem.Application.Features.Categories.Commands.Create
     {
         private readonly IAsyncRepository<Category> _categoryRepository;
         private readonly IMapper _mapper;
+        private readonly ICurrentUserService _currentUserService;
 
-        public CreateCategoryCommandHandler(IAsyncRepository<Category> categoryRepository,IMapper mapper)
+        public CreateCategoryCommandHandler(IAsyncRepository<Category> categoryRepository,IMapper mapper,ICurrentUserService currentUserService)
         {
             _categoryRepository=categoryRepository;
             _mapper=mapper;
+            _currentUserService=currentUserService;
         }
         public async Task<CreateCategoryCommandResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
@@ -34,6 +37,7 @@ namespace TicketManagementSystem.Application.Features.Categories.Commands.Create
                 return response;
             }
             var category= _mapper.Map<Category>(request);
+            category.CreatedBy=_currentUserService.UserId;
             var result= await _categoryRepository.AddAysnc(category);
             response.Success = true;
             response.Category=_mapper.Map<CreateCategoryDto>(category);  

@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
 
+
 namespace TicketManagementSystem.Identity
 {
     public static class IdentityServiceExtentions
@@ -20,24 +21,8 @@ namespace TicketManagementSystem.Identity
         {
             // Identity service registrations go here
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-            services.AddDbContext<TicketManagementSystemIdentityDbContext>(options =>
-            {
-                options.UseSqlServer(
-                    configuration.GetConnectionString("GloboTicketTicketManagementIdentityConnectionString"),
-                    sqlServerOptions =>
-                    {
-                        sqlServerOptions.EnableRetryOnFailure(
-                            maxRetryCount: 5,
-                            maxRetryDelay: TimeSpan.FromSeconds(30),
-                            errorNumbersToAdd: null);
-                        sqlServerOptions.CommandTimeout(60); // 60 seconds command timeout
-                    }
-                );
-            });
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<TicketManagementSystemIdentityDbContext>()
-                .AddDefaultTokenProviders();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

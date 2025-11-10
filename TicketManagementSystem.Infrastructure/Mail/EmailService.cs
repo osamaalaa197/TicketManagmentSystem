@@ -35,7 +35,6 @@ namespace TicketManagementSystem.Infrastructure.Mail
             if(response.StatusCode==System.Net.HttpStatusCode.Accepted || response.StatusCode == System.Net.HttpStatusCode.OK)
                 return true;
             return false;
-            throw new NotImplementedException();
         }
     }
 }

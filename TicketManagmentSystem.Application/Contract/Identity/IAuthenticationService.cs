@@ -11,5 +11,9 @@ namespace TicketManagementSystem.Application.Contract.Identity
     {
         Task<AuthenticationResponse> AuthenticateAsync(AuthenticationRequest request);
         Task<RegistrationResponse> RegisterAsync(RegistrationRequest request);
+        Task<object> RefreshTokenAsync(string token);
+        Task<bool> ConfirmationMail(string userId, string token);
+        Task LogOut();
+
     }
 }
