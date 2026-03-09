@@ -7,9 +7,9 @@ using TicketManagementSystem.Domain.Entities;
 
 namespace TicketManagementSystem.Application.Contract.Persistence
 {
-    public interface IOrderRepository:IAsyncRepository<Order>
+    public interface ITicketRepository:IAsyncRepository<Ticket>
     {
-        Task<List<Order>> GetPagedOrdersForMonth(DateTime date, int page, int size);
-        Task<int> GetTotalOrderForMonth(DateTime date);
+        Task<List<Ticket>> GetPagedTicketsForMonth(DateTime date, int page, int size);
+        Task<int> GetTotalTicketForMonth(DateTime date);
     }
 }

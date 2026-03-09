@@ -41,7 +41,7 @@ namespace TicketManagementSystem.persistence
                 .AddDefaultTokenProviders();
             services.AddScoped(typeof(IAsyncRepository<>), typeof(BaseRepository<>));
             services.AddScoped<IEventRepository, EventRepository>();
-            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<ITicketRepository, TicketRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             return services;
         }

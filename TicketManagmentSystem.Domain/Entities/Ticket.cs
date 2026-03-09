@@ -7,12 +7,16 @@ using TicketManagementSystem.Domain.Comman;
 
 namespace TicketManagementSystem.Domain.Entities
 {
-    public class Order:BaseEntity
+    public class Ticket:BaseEntity
     {
         public Guid Id { get; set; }
+        public Guid EventId { get; set; }
+        public Event Event { get; set; }
         public Guid UserId {  get; set; }
-        public int OrderTotal { get; set; }
-        public DateTime OrderPlaced { get; set; }
+        public decimal Price { get; set; }
+        public DateTime ReservedAt { get; set; }
         public bool OrderPaid { get; set; }
+        public string? PaymentReference { get; set; }
+
     }
 }

@@ -12,8 +12,8 @@ using TicketManagementSystem.persistence;
 namespace TicketManagementSystem.persistence.Migrations
 {
     [DbContext(typeof(TicketManagementSystemDbContext))]
-    [Migration("20251110143338_addIdentityTables")]
-    partial class addIdentityTables
+    [Migration("20251110221649_ChangeColumnName")]
+    partial class ChangeColumnName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -358,7 +358,7 @@ namespace TicketManagementSystem.persistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("TicketManagementSystem.Domain.Entities.Order", b =>
+            modelBuilder.Entity("TicketManagementSystem.Domain.Entities.Ticket", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -376,17 +376,23 @@ namespace TicketManagementSystem.persistence.Migrations
                     b.Property<DateTime?>("DateUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("OrderPaid")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("OrderPlaced")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("PaymentReference")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrderTotal")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("ReservedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -396,79 +402,9 @@ namespace TicketManagementSystem.persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.HasIndex("EventId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("7e94bc5b-71a5-4c8c-bc3b-71bb7976237e"),
-                            DateCreated = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            OrderPaid = true,
-                            OrderPlaced = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            OrderTotal = 400,
-                            UserId = new Guid("a441eb40-9636-4ee6-be49-a66c5ec1330b")
-                        },
-                        new
-                        {
-                            Id = new Guid("86d3a045-b42d-4854-8150-d6a374948b6e"),
-                            DateCreated = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            OrderPaid = true,
-                            OrderPlaced = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            OrderTotal = 135,
-                            UserId = new Guid("ac3cfaf5-34fd-4e4d-bc04-ad1083ddc340")
-                        },
-                        new
-                        {
-                            Id = new Guid("771cca4b-066c-4ac7-b3df-4d12837fe7e0"),
-                            DateCreated = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            OrderPaid = true,
-                            OrderPlaced = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            OrderTotal = 85,
-                            UserId = new Guid("d97a15fc-0d32-41c6-9ddf-62f0735c4c1c")
-                        },
-                        new
-                        {
-                            Id = new Guid("3dcb3ea0-80b1-4781-b5c0-4d85c41e55a6"),
-                            DateCreated = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            OrderPaid = true,
-                            OrderPlaced = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            OrderTotal = 245,
-                            UserId = new Guid("4ad901be-f447-46dd-bcf7-dbe401afa203")
-                        },
-                        new
-                        {
-                            Id = new Guid("e6a2679c-79a3-4ef1-a478-6f4c91b405b6"),
-                            DateCreated = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            OrderPaid = true,
-                            OrderPlaced = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            OrderTotal = 142,
-                            UserId = new Guid("7aeb2c01-fe8e-4b84-a5ba-330bdf950f5c")
-                        },
-                        new
-                        {
-                            Id = new Guid("f5a6a3a0-4227-4973-abb5-a63fbe725923"),
-                            DateCreated = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            OrderPaid = true,
-                            OrderPlaced = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            OrderTotal = 40,
-                            UserId = new Guid("f5a6a3a0-4227-4973-abb5-a63fbe725923")
-                        },
-                        new
-                        {
-                            Id = new Guid("ba0eb0ef-b69b-46fd-b8e2-41b4178ae7cb"),
-                            DateCreated = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsDeleted = false,
-                            OrderPaid = true,
-                            OrderPlaced = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            OrderTotal = 116,
-                            UserId = new Guid("7aeb2c01-fe8e-4b84-a5ba-330bdf950f5c")
-                        });
+                    b.ToTable("Tickets");
                 });
 
             modelBuilder.Entity("TicketManagementSystem.Identity.Models.ApplicationUser", b =>
@@ -544,6 +480,47 @@ namespace TicketManagementSystem.persistence.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("TicketManagementSystem.Identity.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedByIp")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReplacedByToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Revoked")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RevokedByIp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("RefreshToken");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -606,9 +583,32 @@ namespace TicketManagementSystem.persistence.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("TicketManagementSystem.Domain.Entities.Ticket", b =>
+                {
+                    b.HasOne("TicketManagementSystem.Domain.Entities.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+                });
+
+            modelBuilder.Entity("TicketManagementSystem.Identity.Models.RefreshToken", b =>
+                {
+                    b.HasOne("TicketManagementSystem.Identity.Models.ApplicationUser", null)
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
             modelBuilder.Entity("TicketManagementSystem.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Events");
+                });
+
+            modelBuilder.Entity("TicketManagementSystem.Identity.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }
