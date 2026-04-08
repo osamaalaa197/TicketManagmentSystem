@@ -47,6 +47,7 @@ namespace TicketManagement.Api.Controllers
             return Ok(res);
         }
         [HttpDelete]
+        [AllowAnonymous]
         public async Task<ActionResult<DeleteCategoryCommandResponse>> DeleteCategory(DeleteCategoryCommand mode)
         {
             var res=await _mediator.Send(mode);

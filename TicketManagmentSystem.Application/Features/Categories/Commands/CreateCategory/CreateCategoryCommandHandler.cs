@@ -16,12 +16,14 @@ namespace TicketManagementSystem.Application.Features.Categories.Commands.Create
         private readonly IAsyncRepository<Category> _categoryRepository;
         private readonly IMapper _mapper;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateCategoryCommandHandler(IAsyncRepository<Category> categoryRepository,IMapper mapper,ICurrentUserService currentUserService)
+        public CreateCategoryCommandHandler(IAsyncRepository<Category> categoryRepository,IMapper mapper,ICurrentUserService currentUserService,IUnitOfWork unitOfWork)
         {
             _categoryRepository=categoryRepository;
             _mapper=mapper;
             _currentUserService=currentUserService;
+            _unitOfWork = unitOfWork;
         }
         public async Task<CreateCategoryCommandResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
@@ -39,6 +41,7 @@ namespace TicketManagementSystem.Application.Features.Categories.Commands.Create
             var category= _mapper.Map<Category>(request);
             category.CreatedBy=_currentUserService.UserId;
             var result= await _categoryRepository.AddAysnc(category);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             response.Success = true;
             response.Category=_mapper.Map<CreateCategoryDto>(category);  
             return response;

@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TicketManagementSystem.Domain.Comman;
 using TicketManagementSystem.Domain.Entities;
 using TicketManagementSystem.Identity.Models;
@@ -18,14 +14,13 @@ namespace TicketManagementSystem.persistence
             
         }
 
-        public DbSet<Event> Events { get; set; }
+        public DbSet<Domain.Entities.Event> Events { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(TicketManagementSystemDbContext).Assembly);
-
             //seed data, added through migrations
             var concertGuid = Guid.Parse("{B0788D2F-8003-43C1-92A4-EDC76A7C5DDE}");
             var musicalGuid = Guid.Parse("{6313179F-7837-473A-A4D5-A5571B43E6A6}");
@@ -73,7 +68,7 @@ namespace TicketManagementSystem.persistence
                 DateCreated = seedDate,
             });
 
-            modelBuilder.Entity<Event>().HasData(new Event
+            modelBuilder.Entity<Domain.Entities.Event>().HasData(new Domain.Entities.Event
             {
                 Id = Guid.Parse("{EE272F8B-6096-4CB6-8625-BB4BB2D89E8B}"),
                 Name = "John Egbert Live",
@@ -86,7 +81,7 @@ namespace TicketManagementSystem.persistence
                 DateCreated = seedDate,
             });
 
-            modelBuilder.Entity<Event>().HasData(new Event
+            modelBuilder.Entity<Domain.Entities.Event>().HasData(new Domain.Entities.Event
             {
                 Id = Guid.Parse("{3448D5A4-0F72-4DD7-BF15-C14A46B26C00}"),
                 Name = "The State of Affairs: Michael Live!",
@@ -99,7 +94,7 @@ namespace TicketManagementSystem.persistence
                 DateCreated = seedDate,
             });
 
-            modelBuilder.Entity<Event>().HasData(new Event
+            modelBuilder.Entity<Domain.Entities.Event>().HasData(new Domain.Entities.Event
             {
                 Id = Guid.Parse("{B419A7CA-3321-4F38-BE8E-4D7B6A529319}"),
                 Name = "Clash of the DJs",
@@ -112,7 +107,7 @@ namespace TicketManagementSystem.persistence
                 DateCreated = seedDate,
             });
 
-            modelBuilder.Entity<Event>().HasData(new Event
+            modelBuilder.Entity<Domain.Entities.Event>().HasData(new Domain.Entities.Event
             {
                 Id = Guid.Parse("{62787623-4C52-43FE-B0C9-B7044FB5929B}"),
                 Name = "Spanish guitar hits with Manuel",
@@ -125,7 +120,7 @@ namespace TicketManagementSystem.persistence
                 DateCreated = seedDate,
             });
 
-            modelBuilder.Entity<Event>().HasData(new Event
+            modelBuilder.Entity<Domain.Entities.Event>().HasData(new Domain.Entities.Event
             {
                 Id = Guid.Parse("{1BABD057-E980-4CB3-9CD2-7FDD9E525668}"),
                 Name = "Techorama 2021",
@@ -138,7 +133,7 @@ namespace TicketManagementSystem.persistence
                 DateCreated = seedDate,
             });
 
-            modelBuilder.Entity<Event>().HasData(new Event
+            modelBuilder.Entity<Domain.Entities.Event>().HasData(new Domain.Entities.Event
             {
                 Id = Guid.Parse("{ADC42C09-08C1-4D2C-9F96-2D15BB1AF299}"),
                 Name = "To the Moon and Back",
@@ -151,7 +146,9 @@ namespace TicketManagementSystem.persistence
                 DateCreated = seedDate,
             });
 
-
+            modelBuilder.AddInboxStateEntity();
+            modelBuilder.AddOutboxMessageEntity();
+            modelBuilder.AddOutboxStateEntity();
             base.OnModelCreating(modelBuilder);
         }
 

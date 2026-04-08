@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using MassTransit;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TicketManagementSystem.Application.Contract.Events;
 using TicketManagementSystem.Application.Contract.Persistence;
 using TicketManagementSystem.Identity.Models;
 using TicketManagementSystem.persistence.Repositories;
@@ -43,6 +45,7 @@ namespace TicketManagementSystem.persistence
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IUnitOfWork, TicketManagementSystem.persistence.UnitOfWork.UnitOfWork>();
             return services;
         }
     }

@@ -14,11 +14,13 @@ namespace TicketManagementSystem.Application.Features.Categories.Commands.Update
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
+        private readonly TicketManagementSystem.Application.Contract.Persistence.IUnitOfWork _unitOfWork;
 
-        public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository,IMapper mapper)
+        public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository,IMapper mapper, TicketManagementSystem.Application.Contract.Persistence.IUnitOfWork unitOfWork)
         {
             _categoryRepository=categoryRepository;
             _mapper=mapper;
+            _unitOfWork = unitOfWork;
         }
         public async Task<UpdateCategoryCommandReponse> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {

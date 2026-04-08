@@ -19,14 +19,12 @@ namespace TicketManagementSystem.persistence.Repositories
         public async Task<T> AddAysnc(T entity)
         {
              await _dbcontext.AddAsync(entity);
-             await _dbcontext.SaveChangesAsync();
             return entity;
         }
 
         public async Task<bool> DeleteAysnc(T entity)
         {
             _dbcontext.Set<T>().Remove(entity);
-            await _dbcontext.SaveChangesAsync();
             return true;
         }
 
@@ -44,7 +42,6 @@ namespace TicketManagementSystem.persistence.Repositories
         public async Task<T> UpdateAysnc(T entity)
         {
             _dbcontext.Entry(entity).State = EntityState.Modified;
-            await _dbcontext.SaveChangesAsync();
             return entity;
         }
 
@@ -56,7 +53,6 @@ namespace TicketManagementSystem.persistence.Repositories
                 baseEntity.DateDeleted = DateTime.UtcNow;
 
                 _dbcontext.Set<T>().Update(entity);
-                await _dbcontext.SaveChangesAsync();
                 return true;
             }
             return false;

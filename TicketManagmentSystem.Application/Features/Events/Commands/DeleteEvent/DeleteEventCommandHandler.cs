@@ -15,11 +15,13 @@ namespace TicketManagementSystem.Application.Features.Events.Commands.DeleteEven
     {
         private readonly IAsyncRepository<Event> _eventrepository;
         private readonly IMapper _mapper;
-
-        public DeleteEventCommandHandler(IAsyncRepository<Event> eventrepository,IMapper mapper)
+        private readonly IUnitOfWork _unitOfWork;
+    
+        public DeleteEventCommandHandler(IAsyncRepository<Event> eventrepository,IMapper mapper, IUnitOfWork unitOfWork)
         {
             _eventrepository=eventrepository;
             _mapper=mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<DeleteEventResponse> Handle(DeleteEventCommand request, CancellationToken cancellationToken)
@@ -33,6 +35,7 @@ namespace TicketManagementSystem.Application.Features.Events.Commands.DeleteEven
                 return response;
             }
             var result = await _eventrepository.SoftDeleteAysncAsync(@event);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             response.Success = result;
             return response;
         }

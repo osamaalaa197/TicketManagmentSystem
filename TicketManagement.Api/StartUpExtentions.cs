@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using TicketManagement.Api.Middleware;
 using TicketManagementSystem.Application;
 using TicketManagementSystem.Identity;
 using TicketManagementSystem.Infrastructure;
+using TicketManagementSystem.Infrastructure.Messaging.Consumers;
 using TicketManagementSystem.persistence;
 
 namespace TicketManagement.Api
@@ -14,8 +16,20 @@ namespace TicketManagement.Api
         public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
         {
             builder.Services.AddApplicationServices();
-            builder.Services.AddInfrInfrastructureService(builder.Configuration);
+            // Ensure DbContext / persistence services are registered before MassTransit
+            // so the EntityFramework Outbox can resolve the application's DbContext correctly.
             builder.Services.AddPersistenceService(builder.Configuration);
+            builder.Services.AddInfrInfrastructureService(builder.Configuration);
+            //builder.Services.AddMassTransit(x =>
+            //{
+            //    x.AddConsumer<TicketBookedConsumer>();
+
+            //    x.UsingRabbitMq((context, cfg) =>
+            //    {
+            //        cfg.Host("localhost");
+            //        cfg.ConfigureEndpoints(context);
+            //    });
+            //});
             builder.Services.AddIdentityServices(builder.Configuration);
             builder.Services.AddHttpContextAccessor();
 
