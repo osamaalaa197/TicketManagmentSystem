@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TicketManagementSystem.Application.Features.Payment.Commands.ProcessPayment;
 using TicketManagementSystem.Application.Features.Ticket.Commands.CreateTicket;
 
 namespace TicketManagement.Api.Controllers
@@ -9,19 +10,19 @@ namespace TicketManagement.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class TicketsController : ControllerBase
+    public class PaymentController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public TicketsController(IMediator mediator)
+        public PaymentController(IMediator mediator)
         {
             _mediator = mediator;
         }
         [HttpPost("reserve")]
-        public async Task<ActionResult<CreateTicketCommandResponse>> Reserve([FromBody] CreateTicketCommand command)
+        public async Task<ActionResult<ProcessPaymentCommandResponse>> ProcessPayment([FromBody] ProcessPaymentCommand command)
         {
-            var ticketId = await _mediator.Send(command);
-            return Ok(new { TicketId = ticketId });
+            var response = await _mediator.Send(command);
+            return Ok(response);
         }
     }
 }

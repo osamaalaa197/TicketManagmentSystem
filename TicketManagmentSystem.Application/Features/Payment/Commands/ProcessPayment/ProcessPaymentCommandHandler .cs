@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using TicketManagementSystem.Application.Contract.Infrastructure;
 using TicketManagementSystem.Application.Contract.Persistence;
 
-namespace TicketManagementSystem.Application.Features.Ticket.Queries.ProcessPayment
+namespace TicketManagementSystem.Application.Features.Payment.Commands.ProcessPayment
 {
     internal class ProcessPaymentCommandHandler : IRequestHandler<ProcessPaymentCommand, ProcessPaymentCommandResponse>
     {
@@ -35,7 +35,8 @@ namespace TicketManagementSystem.Application.Features.Ticket.Queries.ProcessPaym
             if (res)
             {
                 ticket.OrderPaid = true;
-                ticket.PaymentReference = "das";///TransactionId
+                ticket.PaymentReference = "das"; ///TransactionId
+                ticket.Status= "Confirmed";
                 await _ticketRepository.UpdateAysnc(ticket);
                 response.Success = true;
                 response.Message = "Payment processed successfully.";

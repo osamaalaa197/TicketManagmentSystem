@@ -11,7 +11,7 @@ using TicketManagementSystem.Application.Contract.Identity;
 using TicketManagementSystem.Application.Contract.Persistence;
 using TicketManagementSystem.Domain.Entities;
 
-namespace TicketManagementSystem.Application.Features.Ticket.Queries.CreateTicket
+namespace TicketManagementSystem.Application.Features.Ticket.Commands.CreateTicket
 {
     public class CreateTicketCommandHandler : IRequestHandler<CreateTicketCommand, CreateTicketCommandResponse>
     {
@@ -21,9 +21,9 @@ namespace TicketManagementSystem.Application.Features.Ticket.Queries.CreateTicke
         private readonly IMapper _mapper;
         private readonly IAsyncRepository<Event> _eventRepository;
         private readonly IEventBus _eventBus;
-        private readonly TicketManagementSystem.Application.Contract.Persistence.IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateTicketCommandHandler(ITicketRepository ticketRepository,ILogger<CreateTicketCommandHandler> logger,ICurrentUserService currentUserService,IMapper mapper,IAsyncRepository<Event> eventRepository, IEventBus eventBus, TicketManagementSystem.Application.Contract.Persistence.IUnitOfWork unitOfWork)
+        public CreateTicketCommandHandler(ITicketRepository ticketRepository,ILogger<CreateTicketCommandHandler> logger,ICurrentUserService currentUserService,IMapper mapper,IAsyncRepository<Event> eventRepository, IEventBus eventBus, IUnitOfWork unitOfWork)
         {
             _ticketRepository = ticketRepository;
             _logger=logger;
@@ -43,14 +43,15 @@ namespace TicketManagementSystem.Application.Features.Ticket.Queries.CreateTicke
                 response.Message = "Event not found.";
                 return response;
             }
-            var ticket = new TicketManagementSystem.Domain.Entities.Ticket
+            var ticket = new Domain.Entities.Ticket
             {
                 CreatedBy = _currentUserService.UserId,
                 EventId = request.EventId,
-                UserId = request.UserId,
-                Price = request.Price,
+                UserId = _currentUserService.UserId,
+                Price = evententity.TotalPrice,
                 ReservedAt = DateTime.Now,
                 OrderPaid = false,
+                Status= "Pending"
             };
             await _ticketRepository.AddAysnc(ticket);
 

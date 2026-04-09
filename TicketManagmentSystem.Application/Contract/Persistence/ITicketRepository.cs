@@ -11,5 +11,7 @@ namespace TicketManagementSystem.Application.Contract.Persistence
     {
         Task<List<Ticket>> GetPagedTicketsForMonth(DateTime date, int page, int size);
         Task<int> GetTotalTicketForMonth(DateTime date);
+        Task<List<Ticket>> GetPendingTicketsOlderThan(int minutes);
+        Task<List<Ticket>> GetTicketsForUpcomingEvents(int hours);
     }
 }

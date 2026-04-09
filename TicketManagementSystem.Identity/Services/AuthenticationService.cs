@@ -305,5 +305,15 @@ namespace TicketManagementSystem.Identity.Services
                 await _signInManager.SignOutAsync();
             }
         }
-      }
+
+        public async Task<string> GetEmailUserById(string userId)
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user != null)
+            {
+                return user.Email;
+            }
+            return null;
+        }
+    }
 }

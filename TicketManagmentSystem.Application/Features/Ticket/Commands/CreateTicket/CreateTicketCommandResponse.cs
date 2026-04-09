@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TicketManagementSystem.Application.Responses;
 
-namespace TicketManagementSystem.Application.Features.Ticket.Queries.CreateTicket
+namespace TicketManagementSystem.Application.Features.Ticket.Commands.CreateTicket
 {
     public class CreateTicketCommandResponse:BaseResponse
     {

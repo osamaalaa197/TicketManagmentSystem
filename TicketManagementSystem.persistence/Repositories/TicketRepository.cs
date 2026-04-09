@@ -21,6 +21,21 @@ namespace TicketManagementSystem.persistence.Repositories
                 .Skip((page - 1) * size).Take(size).AsNoTracking().ToListAsync();
         }
 
+        public Task<List<Ticket>> GetPendingTicketsOlderThan(int minutes)
+        {
+            var threshold = DateTime.Now.AddMinutes(-minutes);
+            return _dbcontext.Tickets.Where(e => e.Status == "Pending" && e.ReservedAt < threshold)
+                .AsNoTracking().ToListAsync();
+        }
+
+        public Task<List<Ticket>> GetTicketsForUpcomingEvents(int hours)
+        {
+            var now = DateTime.Now;
+            var upcomingThreshold = now.AddHours(hours);
+            return _dbcontext.Tickets.Where(e => e.ReservedAt > now && e.ReservedAt <= upcomingThreshold && e.Status== "Confirmed")
+                .AsNoTracking().ToListAsync();
+        }
+
         public Task<int> GetTotalTicketForMonth(DateTime date)
         {
             return _dbcontext.Tickets.CountAsync(e => e.ReservedAt .Month == date.Month && e.ReservedAt .Year == date.Year);

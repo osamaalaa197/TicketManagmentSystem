@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TicketManagementSystem.Application.Features.Ticket.Queries.ProcessPayment
+namespace TicketManagementSystem.Application.Features.Payment.Commands.ProcessPayment
 {
     public class ProcessPaymentCommand:IRequest<ProcessPaymentCommandResponse>
     {

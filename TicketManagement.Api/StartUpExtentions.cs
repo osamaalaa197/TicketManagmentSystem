@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using Hangfire;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
@@ -6,6 +7,7 @@ using TicketManagement.Api.Middleware;
 using TicketManagementSystem.Application;
 using TicketManagementSystem.Identity;
 using TicketManagementSystem.Infrastructure;
+using TicketManagementSystem.Infrastructure.BackgroundJobs;
 using TicketManagementSystem.Infrastructure.Messaging.Consumers;
 using TicketManagementSystem.persistence;
 
@@ -66,7 +68,15 @@ namespace TicketManagement.Api
             new string[]{}
         }
     });
-            }); ;
+            });
+            builder.Services.AddHealthChecks();
+
+            // Add health checks for specific services like databases, cache, etc.
+            var connectionString = builder.Configuration
+            .GetConnectionString("GloboTicketTicketManagementConnectionString");
+            builder.Services.AddHealthChecks()
+                .AddSqlServer(connectionString, healthQuery: "select 1;");
+                //.AddRedis("Your_Redis_Connection_String", name: "Redis Cache")
             return builder.Build();
         }
 
@@ -77,6 +87,8 @@ namespace TicketManagement.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.UseHangfireDashboard("/hangfire");
+            app.MapHealthChecks("/health");
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthentication();
@@ -84,6 +96,14 @@ namespace TicketManagement.Api
             app.UseCors("Open");
             app.UseAuthorization();
             app.MapControllers();
+            RecurringJob.AddOrUpdate<ExpireTicketsJob>(
+                "expire-pending-tickets",
+                job => job.ExecuteAsync(),
+                "*/5 * * * *");
+            RecurringJob.AddOrUpdate<SendBookingReminderEmailsJobs>(
+                "send-nookingReminder-Event",
+                job => job.ExecuteAsync(),
+                "*/5 * * * *");
             return app;
         }
 

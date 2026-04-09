@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Ticket\Commands\" />
+    <Folder Include="Features\Ticket\Queries\" />
   </ItemGroup>
 
 </Project>

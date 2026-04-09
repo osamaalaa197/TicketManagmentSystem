@@ -12,6 +12,6 @@ namespace TicketManagementSystem.Application.Contract.Events
         public string Email { get; set; }
         public string EventName { get; set;  }
         public decimal Price { get; set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
     }
 }

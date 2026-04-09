@@ -1,9 +1,13 @@
-﻿using MassTransit;
+﻿using Hangfire;
+using Hangfire.AspNetCore;
+using Hangfire.SqlServer;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TicketManagementSystem.Application.Contract.Events;
 using TicketManagementSystem.Application.Contract.Infrastructure;
 using TicketManagementSystem.Application.Models.Mail;
+using TicketManagementSystem.Infrastructure.BackgroundJobs;
 using TicketManagementSystem.Infrastructure.Mail;
 using TicketManagementSystem.Infrastructure.Messaging;
 using TicketManagementSystem.Infrastructure.Messaging.Consumers;
@@ -20,6 +24,8 @@ namespace TicketManagementSystem.Infrastructure
             services.AddMassTransit(x =>
             {
                 x.AddConsumer<TicketBookedConsumer>();
+                x.AddConsumer<TicketExpiredConsumer>();
+                x.AddConsumer<BookingReminderEmailEventConsumer>();
                 // Enable EF Outbox so published messages are persisted to the application's
                 // database and only dispatched after the application's SaveChanges completes.
                 x.AddEntityFrameworkOutbox<TicketManagementSystemDbContext>(o =>
@@ -37,12 +43,18 @@ namespace TicketManagementSystem.Infrastructure
                     cfg.ConfigureEndpoints(context);
                 });
             });
+            services.AddHangfire(config =>
+            config.UseSqlServerStorage(
+                configuration.GetConnectionString("GloboTicketTicketManagementConnectionString")));
+            services.AddHangfireServer();
             services.AddTransient<IEmailService, EmailService>();
             services.AddScoped<PayPalPaymentStrategy>();
             services.AddScoped<StripePaymentStrategy>();
             services.AddScoped<PaymentStrategyFactory>();
             services.AddScoped<IPaymentStrategyFactory, PaymentStrategyFactory>();
             services.AddScoped<IEventBus, MassTransitEventBus>();
+            services.AddScoped<ExpireTicketsJob>();
+            services.AddScoped<SendBookingReminderEmailsJobs>();
             return services;
         }
     }

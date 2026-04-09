@@ -12,11 +12,12 @@ namespace TicketManagementSystem.Domain.Entities
         public Guid Id { get; set; }
         public Guid EventId { get; set; }
         public Event Event { get; set; }
-        public Guid UserId {  get; set; }
+        public string UserId {  get; set; }
         public decimal Price { get; set; }
         public DateTime ReservedAt { get; set; }
         public bool OrderPaid { get; set; }
         public string? PaymentReference { get; set; }
+        public string Status { get; set; } = "Pedning";
 
     }
 }

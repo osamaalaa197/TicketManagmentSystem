@@ -14,6 +14,7 @@ namespace TicketManagementSystem.Application.Contract.Identity
         Task<object> RefreshTokenAsync(string token);
         Task<bool> ConfirmationMail(string userId, string token);
         Task LogOut();
+        Task<string> GetEmailUserById(string userId);
 
     }
 }
