@@ -7,7 +7,7 @@ using TicketManagementSystem.Domain.Comman;
 
 namespace TicketManagementSystem.Domain.Entities
 {
-    public class Ticket:BaseEntity
+    public class Ticket:BaseEntity, IAuditableEntity
     {
         public Guid Id { get; set; }
         public Guid EventId { get; set; }

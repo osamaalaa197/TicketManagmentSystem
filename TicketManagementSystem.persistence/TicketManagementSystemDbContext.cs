@@ -1,22 +1,29 @@
 ﻿using MassTransit;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Security.AccessControl;
+using TicketManagementSystem.Application.Contract.Identity;
 using TicketManagementSystem.Domain.Comman;
 using TicketManagementSystem.Domain.Entities;
 using TicketManagementSystem.Identity.Models;
+using TicketManagementSystem.Identity.Services;
+using TicketManagementSystem.persistence.Audit;
 
 namespace TicketManagementSystem.persistence
 {
     public class TicketManagementSystemDbContext:IdentityDbContext<ApplicationUser>
     {
-        public TicketManagementSystemDbContext(DbContextOptions<TicketManagementSystemDbContext> contextOptions) :base(contextOptions)
+        private readonly ICurrentUserService _currentUserService;
+
+        public TicketManagementSystemDbContext(DbContextOptions<TicketManagementSystemDbContext> contextOptions, ICurrentUserService currentUserService) :base(contextOptions)
         {
-            
+            _currentUserService=currentUserService;
         }
 
         public DbSet<Domain.Entities.Event> Events { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -152,25 +159,99 @@ namespace TicketManagementSystem.persistence
             base.OnModelCreating(modelBuilder);
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+            var auditEntries = CaptureAuditEntries();
+
+            // Step 2 - save entity changes + outbox message
+            var result = await base.SaveChangesAsync(cancellationToken);
+
+            // Step 3 - save audit logs
+            await WriteAuditLogs(auditEntries);
+
+            return result;
+        }
+        private List<AuditEntry> CaptureAuditEntries()
+        {
+            ChangeTracker.DetectChanges();
+            var auditEntries = new List<AuditEntry>();
+
+            foreach (var entry in ChangeTracker.Entries())
             {
-                switch (entry.State)
+                if (entry.Entity is not IAuditableEntity)
+                    continue;
+                if (entry.Entity is AuditLog ||
+                    entry.State == EntityState.Detached ||
+                    entry.State == EntityState.Unchanged)
+                    continue;
+
+                var isSoftDelete = entry.State == EntityState.Modified
+                    && entry.Properties.Any(p =>
+                        p.Metadata.Name == "IsDeleted"
+                        && p.CurrentValue is true
+                        && p.OriginalValue is false);
+
+                var auditEntry = new AuditEntry(entry)
                 {
-                    case EntityState.Added:
-                        entry.Entity.DateCreated = DateTime.Now;
-                        break;
-                    case EntityState.Modified:
-                        entry.Entity.DateUpdated = DateTime.Now;
-                        break;
-                    case EntityState.Deleted:
-                        entry.Entity.DateDeleted = DateTime.Now;
-                        entry.Entity.IsDeleted = true;
-                        break;
+                    EntityName = entry.Entity.GetType().Name,
+                    Action = isSoftDelete ? "Deleted" : entry.State switch
+                    {
+                        EntityState.Added => "Created",
+                        EntityState.Modified => "Updated",
+                        EntityState.Deleted => "Deleted",
+                        _ => "Unknown"
+                    }
+                };
+
+                foreach (var property in entry.Properties)
+                {
+                    var propertyName = property.Metadata.Name;
+
+                    if (property.Metadata.IsPrimaryKey())
+                    {
+                        auditEntry.PrimaryKey = property.CurrentValue?.ToString() ?? "";
+                        continue;
+                    }
+
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            auditEntry.NewValues[propertyName] = property.CurrentValue;
+                            break;
+
+                        case EntityState.Deleted:
+                            auditEntry.OldValues[propertyName] = property.OriginalValue;
+                            break;
+
+                        case EntityState.Modified:
+                            if (property.IsModified)
+                            {
+                                auditEntry.AffectedColumns.Add(propertyName);
+                                auditEntry.OldValues[propertyName] = property.OriginalValue;
+                                auditEntry.NewValues[propertyName] = property.CurrentValue;
+                            }
+                            break;
+                    }
                 }
+
+                auditEntries.Add(auditEntry);
             }
-            return base.SaveChangesAsync(cancellationToken);
+
+            return auditEntries;
+        }
+        private async Task WriteAuditLogs(List<AuditEntry> auditEntries)
+        {
+            if (!auditEntries.Any()) return;
+            var userId = _currentUserService.UserId ?? "Anonymous";
+            var auditLogs = auditEntries.Select(e =>
+            {
+                var log = e.ToAuditLog();
+                log.UserId = userId;
+                return log;
+            }).ToList(); await AuditLogs.AddRangeAsync(auditLogs);
+
+            // ✅ base — never this.SaveChangesAsync() → infinite loop!
+            await base.SaveChangesAsync();
         }
     }
 }
