@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TicketManagementSystem.Application.Contract.Persistence;
+using TicketManagementSystem.Domain.Enums;
 
 namespace TicketManagementSystem.Application.Features.Ticket.Commands.CancelTicket
 {
@@ -30,7 +31,7 @@ namespace TicketManagementSystem.Application.Features.Ticket.Commands.CancelTick
                     response.Message = "Ticket not found.";
                     return response;
                 }
-                ticket.Status = "Cancelled";
+                ticket.Status = TicketStatus.Cancelled.ToString(); //"Cancelled";
                 await _ticketRepository.UpdateAysnc(ticket);
                 await _unitOfWork.SaveChangesAsync();
                 response.Success = true;

@@ -40,5 +40,9 @@ namespace TicketManagementSystem.persistence.Repositories
         {
             return _dbcontext.Tickets.CountAsync(e => e.ReservedAt .Month == date.Month && e.ReservedAt .Year == date.Year);
         }
+        public Task<List<Ticket>> GetTicketsByUserId(string userId)
+        {
+            return _dbcontext.Tickets.Where(e => e.UserId == userId).AsNoTracking().ToListAsync();
+        }
     }
 }

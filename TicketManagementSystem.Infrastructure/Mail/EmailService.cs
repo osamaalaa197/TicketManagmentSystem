@@ -23,7 +23,7 @@ namespace TicketManagementSystem.Infrastructure.Mail
             _emailSetting = emailSetting.Value;
         }
         public async Task<bool> SendEmail(Email email)
-        {
+            {
             //var client = new SendGridClient(_emailSetting.APIKey);
             //var subject=email.Subject;
             //var to =new EmailAddress(email.To);

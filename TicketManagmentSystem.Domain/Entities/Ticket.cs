@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TicketManagementSystem.Domain.Comman;
+using TicketManagementSystem.Domain.Enums;
 
 namespace TicketManagementSystem.Domain.Entities
 {
@@ -17,7 +18,7 @@ namespace TicketManagementSystem.Domain.Entities
         public DateTime ReservedAt { get; set; }
         public bool OrderPaid { get; set; }
         public string? PaymentReference { get; set; }
-        public string Status { get; set; } = "Pedning";
+        public string Status { get; set; } = TicketStatus.Pending.ToString();
 
     }
 }

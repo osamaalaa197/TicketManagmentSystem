@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TicketManagementSystem.Application.Contract.Infrastructure;
 using TicketManagementSystem.Application.Contract.Persistence;
+using TicketManagementSystem.Domain.Enums;
 
 namespace TicketManagementSystem.Application.Features.Payment.Commands.ProcessPayment
 {
@@ -36,7 +37,7 @@ namespace TicketManagementSystem.Application.Features.Payment.Commands.ProcessPa
             {
                 ticket.OrderPaid = true;
                 ticket.PaymentReference = "das"; ///TransactionId
-                ticket.Status= "Confirmed";
+                ticket.Status = TicketStatus.Confirmed.ToString(); // "Confirmed";
                 await _ticketRepository.UpdateAysnc(ticket);
                 response.Success = true;
                 response.Message = "Payment processed successfully.";

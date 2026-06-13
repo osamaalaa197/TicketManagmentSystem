@@ -13,5 +13,6 @@ namespace TicketManagementSystem.Application.Contract.Persistence
         Task<int> GetTotalTicketForMonth(DateTime date);
         Task<List<Ticket>> GetPendingTicketsOlderThan(int minutes);
         Task<List<Ticket>> GetTicketsForUpcomingEvents(int hours);
+        Task<List<Ticket>> GetTicketsByUserId(string userId);
     }
 }

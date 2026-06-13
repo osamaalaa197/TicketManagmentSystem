@@ -12,6 +12,7 @@ using TicketManagementSystem.Application.Features.Events.Commands.CreateEvent;
 using TicketManagementSystem.Application.Features.Events.Commands.UpdateEvent;
 using TicketManagementSystem.Application.Features.Events.Queries.GetEventDetails;
 using TicketManagementSystem.Application.Features.Events.Queries.GetEventList;
+using TicketManagementSystem.Application.Features.Ticket.Queries.GetUserTickets;
 using TicketManagementSystem.Domain.Entities;
 
 namespace TicketManagementSystem.Application.Profiles
@@ -37,6 +38,9 @@ namespace TicketManagementSystem.Application.Profiles
 
             //Update Category'
             CreateMap<Category, UpdateCategoryDto>().ReverseMap();
+
+            //Ticket
+            CreateMap<Ticket, TicketDto>().ReverseMap();
         }
     }
 }
